@@ -121,5 +121,32 @@ test('renders all firstName, lastName and email text when submitted. Does NOT re
 });
 
 test('renders all fields text when all fields are submitted.', async () => {
+  render(<ContactForm />);
 
+  const validName = "Valid";
+  const validEmail = "validemail@nowhere.com";
+  const note = "Now here's a little story all about how...";
+  const firstName = screen.getByLabelText(/first name*/i);
+  userEvent.type(firstName, validName);
+  const lastName = screen.getByLabelText(/last name*/i);
+  userEvent.type(lastName, validName);
+  const email = screen.getByLabelText(/email*/i);
+  userEvent.type(email, validEmail);
+  const message = screen.getByLabelText(/message/i);
+  userEvent.type(message, note);
+  const submit = screen.getByRole("button");
+  userEvent.click(submit);
+
+  await waitFor(async () => {
+    const display = screen.queryByText(/you submitted:/i);
+    expect(display).toBeTruthy();
+    const displayFirst = screen.queryByTestId(/firstnamedisplay/i);
+    expect(displayFirst).toBeTruthy();
+    const displayLast = screen.queryByTestId(/lastnamedisplay/i);
+    expect(displayLast).toBeTruthy();
+    const displayEmail = screen.queryByTestId(/emaildisplay/i);
+    expect(displayEmail).toBeTruthy();
+    const displayMessage = screen.queryByTestId(/messagedisplay/i);
+    expect(displayMessage).toBeTruthy();
+  });
 });
