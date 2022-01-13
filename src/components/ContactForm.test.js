@@ -70,17 +70,56 @@ test('renders "email must be a valid email address" if an invalid email is enter
 
   await waitFor(async () => {
     const error = screen.queryByTestId("error");
-    expect(error).toHaveTextContent(/email must be a valid email address/i);
+    expect(error).toHaveTextContent("email must be a valid email address");
   });
 });
 
 test('renders "lastName is a required field" if an last name is not entered and the submit button is clicked', async () => {
-    
+  render(<ContactForm />);
+
+  const validFirst = "Valid";
+  const validEmail = "validemail@nowhere.com";
+  const firstName = screen.getByLabelText(/first name*/i);
+  userEvent.type(firstName, validFirst);
+  const email = screen.getByLabelText(/email*/i);
+  userEvent.type(email, validEmail);
+  const submit = screen.getByRole("button");
+  userEvent.click(submit);
+
+  await waitFor(async () => {
+    const error = screen.queryByTestId("error");
+    expect(error).toHaveTextContent("lastName is a required field");
+  });
 });
 
 test('renders all firstName, lastName and email text when submitted. Does NOT render message if message is not submitted.', async () => {
-    
+  render(<ContactForm />);
+
+  const validName = "Valid";
+  const validEmail = "validemail@nowhere.com";
+  const firstName = screen.getByLabelText(/first name*/i);
+  userEvent.type(firstName, validName);
+  const lastName = screen.getByLabelText(/last name*/i);
+  userEvent.type(lastName, validName);
+  const email = screen.getByLabelText(/email*/i);
+  userEvent.type(email, validEmail);
+  const submit = screen.getByRole("button");
+  userEvent.click(submit);
+
+  await waitFor(async () => {
+    const display = screen.queryByText(/you submitted:/i);
+    expect(display).toBeTruthy();
+    const displayFirst = screen.queryByTestId(/firstnamedisplay/i);
+    expect(displayFirst).toBeTruthy();
+    const displayLast = screen.queryByTestId(/lastnamedisplay/i);
+    expect(displayLast).toBeTruthy();
+    const displayEmail = screen.queryByTestId(/emaildisplay/i);
+    expect(displayEmail).toBeTruthy();
+    const displayMessage = screen.queryByTestId(/messagedisplay/i);
+    expect(displayMessage).not.toBeTruthy();
+  });
 });
 
 test('renders all fields text when all fields are submitted.', async () => {
+
 });
