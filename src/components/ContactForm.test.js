@@ -22,13 +22,21 @@ test('renders ONE error message if user enters less then 5 characters into first
   const input = "Four";
   const firstName = screen.getByLabelText(/first name*/i);
   userEvent.type(firstName, input);
-  const error = await screen.findAllByTestId("error");
-  expect(error).toBeTruthy();
-  expect(error).toHaveLength(1);
+  waitFor(async () => {
+    const error = screen.queryAllByTestId("error");
+    expect(error).toBeTruthy();
+    expect(error).toHaveLength(1);
+  });
 });
 
 test('renders THREE error messages if user enters no values into any fields.', async () => {
-    
+  render(<ContactForm />);
+  const submit = screen.getByRole("button");
+  userEvent.click(submit);
+  waitFor(async () => {
+    const error = screen.queryAllByTestId("error");
+    expect(error).toHaveLength(3);
+  });
 });
 
 test('renders ONE error message if user enters a valid first name and last name but no email.', async () => {
